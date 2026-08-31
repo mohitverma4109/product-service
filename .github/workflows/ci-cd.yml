@@ -26,7 +26,7 @@ jobs:
         run: npm test
 
       - name: Run AccuKnox SAST
-        uses: accuknox/accuknox-code-analysis@latest
+        uses: accuknox/accuknox-code-analysis@v1.0.0
         with:
           scan_type: "sast"
           accuknox_token: ${{ secrets.ACCUKNOX_TOKEN }}

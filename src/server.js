@@ -23,7 +23,7 @@ app.get("/health", (req, res) => {
   res.json({
     service: "product-service",
     status: "UP"
-  });
+    version: "1.0"  
 });
 
 app.get("/products/:id", (req, res) => {

@@ -46,3 +46,4 @@ jobs:
           accuknox_label: ${{ secrets.ACCUKNOX_LABEL }}
           sca_severity: "HIGH,CRITICAL"
           soft_fail: false
+

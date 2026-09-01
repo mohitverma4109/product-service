@@ -34,9 +34,8 @@ jobs:
           accuknox_label: ${{ secrets.ACCUKNOX_LABEL }}
           sast_severity: "HIGH,CRITICAL"
           soft_fail: false
-            
 
-       SCA
+      # SCA
       - name: Run AccuKnox SCA
         uses: accuknox/accuknox-code-analysis@v1.0.0
         with:
@@ -46,4 +45,3 @@ jobs:
           accuknox_label: ${{ secrets.ACCUKNOX_LABEL }}
           sca_severity: "HIGH,CRITICAL"
           soft_fail: false
-

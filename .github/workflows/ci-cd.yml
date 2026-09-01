@@ -10,8 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout PR code:wq
-      #
+
       - name: Checkout source code
         uses: actions/checkout@v4
         with:
@@ -26,17 +25,16 @@ jobs:
           accuknox_token: ${{ secrets.ACCUKNOX_TOKEN }}
           accuknox_endpoint: ${{ secrets.ACCUKNOX_ENDPOINT }}
           accuknox_label: ${{ secrets.ACCUKNOX_LABEL }}
-          soft_fail: true
-          upload_artifact: true
+          soft_fail: false
 
-      # Setup Node.js
+      # Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 24
           cache: npm
 
-      # Install dependencies
+      # Dependencies
       - name: Install dependencies
         run: npm ci
 
@@ -66,4 +64,18 @@ jobs:
           sca_severity: "HIGH,CRITICAL"
           soft_fail: false
 
+      # Build Docker Image
+      - name: Build Docker image
+        run: |
+          docker build -t product-service:${{ github.sha }} .
 
+      # Container Security Scan
+      - name: Run Trivy Container Scan
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: product-service:${{ github.sha }}
+          format: table
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'

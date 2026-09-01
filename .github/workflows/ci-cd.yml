@@ -1,4 +1,4 @@
- name: Product Service CI
+name: Product Service CI
 
 on:
   pull_request:
@@ -64,4 +64,5 @@ jobs:
           accuknox_label: ${{ secrets.ACCUKNOX_LABEL }}
           sca_severity: "HIGH,CRITICAL"
           soft_fail: false
+
 

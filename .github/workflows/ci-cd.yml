@@ -12,6 +12,8 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -25,6 +27,7 @@ jobs:
       - name: Run tests
         run: npm test
 
+      # SAST
       - name: Run AccuKnox SAST
         uses: accuknox/accuknox-code-analysis@v1.0.0
         with:
@@ -44,4 +47,14 @@ jobs:
           accuknox_endpoint: ${{ secrets.ACCUKNOX_ENDPOINT }}
           accuknox_label: ${{ secrets.ACCUKNOX_LABEL }}
           sca_severity: "HIGH,CRITICAL"
+          soft_fail: false
+
+      # Secret Scanning
+      - name: Run AccuKnox Secret Scan
+        uses: accuknox/accuknox-code-analysis@v1.0.0
+        with:
+          scan_type: "secret"
+          accuknox_token: ${{ secrets.ACCUKNOX_TOKEN }}
+          accuknox_endpoint: ${{ secrets.ACCUKNOX_ENDPOINT }}
+          accuknox_label: ${{ secrets.ACCUKNOX_LABEL }}
           soft_fail: false

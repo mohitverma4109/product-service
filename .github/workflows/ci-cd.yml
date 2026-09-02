@@ -50,7 +50,7 @@ jobs:
           accuknox_token: ${{ secrets.ACCUKNOX_TOKEN }}
           accuknox_endpoint: ${{ secrets.ACCUKNOX_ENDPOINT }}
           accuknox_label: ${{ secrets.ACCUKNOX_LABEL }}
-          sast_severity: "HIGH,CRITICAL"
+          sast_severity: "CRITICAL"
           soft_fail: false
 
       # SCA

@@ -1,0 +1,81 @@
+name: Product Service CI
+
+on:
+  pull_request:
+    branches:
+      - dev
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout source code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Secret Scanning
+      - name: Run AccuKnox Secret Scan
+        uses: accuknox/accuknox-code-analysis@v1.0.0
+        with:
+          scan_type: "secret"
+          secret_command: "filesystem ."
+          accuknox_token: ${{ secrets.ACCUKNOX_TOKEN }}
+          accuknox_endpoint: ${{ secrets.ACCUKNOX_ENDPOINT }}
+          accuknox_label: ${{ secrets.ACCUKNOX_LABEL }}
+          soft_fail: true
+
+      # Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      # Dependencies
+      - name: Install dependencies
+        run: npm ci
+
+      # Unit Tests
+      - name: Run tests
+        run: npm test
+
+      # SAST
+      - name: Run AccuKnox SAST
+        uses: accuknox/accuknox-code-analysis@v1.0.0
+        with:
+          scan_type: "sast"
+          accuknox_token: ${{ secrets.ACCUKNOX_TOKEN }}
+          accuknox_endpoint: ${{ secrets.ACCUKNOX_ENDPOINT }}
+          accuknox_label: ${{ secrets.ACCUKNOX_LABEL }}
+          sast_severity: "CRITICAL"
+          soft_fail: false
+
+      # SCA
+      - name: Run AccuKnox SCA
+        uses: accuknox/accuknox-code-analysis@v1.0.0
+        with:
+          scan_type: "sca"
+          accuknox_token: ${{ secrets.ACCUKNOX_TOKEN }}
+          accuknox_endpoint: ${{ secrets.ACCUKNOX_ENDPOINT }}
+          accuknox_label: ${{ secrets.ACCUKNOX_LABEL }}
+          sca_severity: "HIGH,CRITICAL"
+          soft_fail: false
+
+      # Build Docker Image
+      - name: Build Docker image
+        run: |
+          docker build -t product-service:${{ github.sha }} .
+
+      # Container Security Scan
+      - name: Run Trivy Container Scan
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: product-service:${{ github.sha }}
+          format: table
+          exit-code: '0'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'

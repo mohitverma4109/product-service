@@ -1,0 +1,17 @@
+name: UAT DAST Scan
+
+on:
+  workflow_dispatch:
+
+jobs:
+  dast:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Run AccuKnox DAST
+        uses: accuknox/accuknox-dast@v1.0.0
+        with:
+          target_url: "http://50.112.139.26:3003"
+          accuknox_token: ${{ secrets.ACCUKNOX_TOKEN }}
+          accuknox_endpoint: ${{ secrets.ACCUKNOX_ENDPOINT }}
+          accuknox_label: ${{ secrets.ACCUKNOX_LABEL }}

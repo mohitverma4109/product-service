@@ -11,9 +11,11 @@ jobs:
 
     steps:
       - name: Run AccuKnox DAST
-        uses: accuknox/accuknox-dast@v1.0.0
+        uses: accuknox/dast-scan-action@latest
         with:
           target_url: "http://50.112.139.26:3003"
           accuknox_token: ${{ secrets.ACCUKNOX_TOKEN }}
           accuknox_endpoint: ${{ secrets.ACCUKNOX_ENDPOINT }}
           accuknox_label: ${{ secrets.ACCUKNOX_LABEL }}
+          severity_threshold: "HIGH"
+          dast_scan_type: "full-scan"

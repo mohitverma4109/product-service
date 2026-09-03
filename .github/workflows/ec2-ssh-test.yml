@@ -1,7 +1,9 @@
 name: EC2 SSH Test
 
 on:
-  workflow_dispatch:
+  push:
+    branch:
+      - dev
 
 jobs:
   test-ssh:

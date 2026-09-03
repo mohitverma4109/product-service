@@ -3,7 +3,7 @@ name: Product Service CI
 on:
   pull_request:
     branches:
-      - dev
+      - uat
 
 jobs:
   test:

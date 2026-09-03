@@ -1,0 +1,48 @@
+name: UAT Deployment
+
+on:
+  push:
+    branches:
+      - uat
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy UAT application
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+          script: |
+            cd ~/product-service
+
+            echo "Pulling latest UAT code..."
+            git fetch origin
+            git checkout uat
+            git pull origin uat
+
+            echo "Building UAT Docker image..."
+            docker build -t product-service:uat .
+
+            echo "Stopping old UAT container..."
+            docker stop product-service-uat || true
+
+            echo "Removing old UAT container..."
+            docker rm product-service-uat || true
+
+            echo "Starting new UAT container..."
+            docker run -d \
+              --name product-service-uat \
+              -p 3003:3002 \
+              product-service:uat
+
+            echo "Waiting for application..."
+            sleep 5
+
+            echo "Checking UAT health..."
+            curl -f http://localhost:3003/health
+
+            echo "UAT deployment successful!"
